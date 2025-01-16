@@ -41,7 +41,7 @@ def get_credentials(
     # Check if credentials exist
     if not os.path.exists(_TOKEN_PATH) or not os.path.exists(_SECRETS_PATH):
         # Import here to avoid circular imports
-        from eaia.scripts.generate_secrets import generate_secrets
+        from eaia.generate_secrets import generate_secrets
         generate_secrets()
     
     gmail_token = gmail_token or os.getenv("GMAIL_TOKEN")
