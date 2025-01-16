@@ -1,0 +1,15 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Copy only the necessary files
+COPY scripts/railway_ingest.py /app/scripts/
+COPY eaia /app/eaia/
+COPY setup.py /app/
+COPY requirements.txt /app/
+
+# Install dependencies
+RUN pip install -e .
+
+# Set the command to run the ingest script
+CMD ["python", "scripts/railway_ingest.py"] 
