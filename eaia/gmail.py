@@ -35,8 +35,15 @@ _TOKEN_PATH = str(_SECRETS_DIR / "token.json")
 def get_credentials(
     gmail_token: str | None = None, gmail_secret: str | None = None
 ) -> Credentials:
+    """Get Gmail credentials, generating them if they don't exist."""
     creds = None
-    _SECRETS_DIR.mkdir(parents=True, exist_ok=True)
+    
+    # Check if credentials exist
+    if not os.path.exists(_TOKEN_PATH) or not os.path.exists(_SECRETS_PATH):
+        # Import here to avoid circular imports
+        from eaia.scripts.generate_secrets import generate_secrets
+        generate_secrets()
+    
     gmail_token = gmail_token or os.getenv("GMAIL_TOKEN")
     if gmail_token:
         with open(_TOKEN_PATH, "w") as token:
@@ -45,6 +52,7 @@ def get_credentials(
     if gmail_secret:
         with open(_SECRETS_PATH, "w") as secret:
             secret.write(gmail_secret)
+    
     if os.path.exists(_TOKEN_PATH):
         creds = Credentials.from_authorized_user_file(_TOKEN_PATH)
 
