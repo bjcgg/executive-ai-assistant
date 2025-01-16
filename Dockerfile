@@ -24,5 +24,5 @@ COPY docker-entrypoint.sh /
 RUN chmod 755 /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
-# Add a default CMD in case none is provided
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+# Use the correct path to the ASGI application
+CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8080"]
