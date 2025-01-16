@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  eaia:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      GMAIL_SECRET: ${GMAIL_SECRET}
+      GMAIL_TOKEN: ${GMAIL_TOKEN}
+      LANGSMITH_API_KEY: ${LANGSMITH_API_KEY}
+      LANGGRAPH_STORE: '{"index": {"embed": "openai:text-embedding-3-small", "dims": 1536}}'
+      LANGSERVE_GRAPHS: '{"main": "/deps/executive-ai-assistant/eaia/main/graph.py:graph", "cron": "/deps/executive-ai-assistant/eaia/cron_graph.py:graph", "general_reflection_graph": "/deps/executive-ai-assistant/eaia/reflection_graphs.py:general_reflection_graph", "multi_reflection_graph": "/deps/executive-ai-assistant/eaia/reflection_graphs.py:multi_reflection_graph"}'
+    ports:
+      - "8000:8000"
+
+  cron:
+    build:
+      context: .
+      dockerfile: Dockerfile.cron
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      GMAIL_SECRET: ${GMAIL_SECRET}
+      GMAIL_TOKEN: ${GMAIL_TOKEN}
+      LANGSMITH_API_KEY: ${LANGSMITH_API_KEY}
+      LANGGRAPH_URL: http://eaia:8000
+    depends_on:
+      - eaia
+    deploy:
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "railway.cron.schedule=*/10 * * * *"
+        - "railway.cron.command=python scripts/railway_ingest.py" 
