@@ -16,8 +16,3 @@ ENV LANGGRAPH_STORE='{"index": {"embed": "openai:text-embedding-3-small", "dims"
 ENV LANGSERVE_GRAPHS='{"main": "/deps/executive-ai-assistant/eaia/main/graph.py:graph", "cron": "/deps/executive-ai-assistant/eaia/cron_graph.py:graph", "general_reflection_graph": "/deps/executive-ai-assistant/eaia/reflection_graphs.py:general_reflection_graph", "multi_reflection_graph": "/deps/executive-ai-assistant/eaia/reflection_graphs.py:multi_reflection_graph"}'
 
 WORKDIR /deps/executive-ai-assistant
-
-# Add an entrypoint script to generate secrets before starting the app
-COPY docker-entrypoint.sh /
-RUN chmod +x /docker-entrypoint.sh
-ENTRYPOINT ["/docker-entrypoint.sh"]
